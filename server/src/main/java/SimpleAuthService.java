@@ -3,18 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleAuthService implements AuthService {
-    private class UserData {
-        private String login;
-        private String password;
-        private String nickname;
-
-        public UserData(String login, String password, String nickname) {
-            this.login = login;
-            this.password = password;
-            this.nickname = nickname;
-        }
-    }
-
     private static final String DB_CONNECTION = "jdbc:sqlite:users.db";
     private static Connection connection;
 
