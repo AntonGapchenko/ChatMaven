@@ -38,6 +38,9 @@ public class Controller implements Initializable {
         if (!authenticated) {
             login="";
             nickname = "";
+        }else {
+            String history=LocalHistory.getLastMsgInHistory(login);
+            textArea.appendText(history);
         }
     }
 
@@ -97,6 +100,11 @@ public class Controller implements Initializable {
                         }
                     });
                 }
+            } else {
+                String massage=msg+System.lineSeparator();
+                textArea.appendText(massage);
+                LocalHistory.writeMsg(login,massage);
+
             }
         });
     }
