@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 
 public class ClientHandler {
     private String nickname;
@@ -14,13 +15,13 @@ public class ClientHandler {
         return nickname;
     }
 
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(Server server, Socket socket, AuthService authService, ExecutorService executorService) {
         try {
             this.server = server;
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            new Thread(() -> {
+            executorService.submit(() -> {
                 try {
                     while (true) {
                         String msg = in.readUTF();
@@ -38,12 +39,12 @@ public class ClientHandler {
                     }
                     while (true) {
                         String msg = in.readUTF();
-                        if(msg.startsWith("/")) {
+                        if (msg.startsWith("/")) {
                             if (msg.equals("/end")) {
                                 sendMsg("/end");
                                 break;
                             }
-                            if(msg.startsWith("/w ")) {
+                            if (msg.startsWith("/w ")) {
                                 String[] tokens = msg.split("\\s", 3);
                                 server.privateMsg(this, tokens[1], tokens[2]);
                             }
@@ -56,7 +57,7 @@ public class ClientHandler {
                 } finally {
                     ClientHandler.this.disconnect();
                 }
-            }).start();
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
